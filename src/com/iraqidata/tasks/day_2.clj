@@ -42,16 +42,3 @@ total-unique-airports
 ;; Optional: Use the `airlines` dataset to get the name of the carrier with the
 ;; highest average distance.
 
-(def airlines
-  (tc/dataset "./resources/data/airlines.csv"
-              {:key-fn keyword}))
-  
-(def carrier-highest-avg-distance
-  (-> ds
-      (tc/group-by [:carrier])
-      (tc/mean :distance)
-      (tc/inner-join airlines {:on [:carrier :carrier]})
-      (tc/order-by [:avg-distance] :desc)
-      (tc/select-columns [:name :avg-distance])
-      (tc/first)))
- carrier-highest-avg-distance
