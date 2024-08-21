@@ -1,7 +1,7 @@
 (ns com.iraqidata.tasks.day-2
   (:require
-   [clojure.string :as str]
-   '[scicloj.clay.v2.api :as clay]
+   [clojure.string :as str]   
+   [scicloj.clay.v2.api :as clay]
    [tablecloth.api :as tc]
    tech.v3.datatype.casting))
 
@@ -36,9 +36,28 @@ total-unique-airports
 (def avg-arrival-delay-by-month
  ( -> ds
   (tc/group-by [:month])
-  (tc/mean :arr-delay))
-
+  (tc/mean :arr-delay)
+  (tc/order-by :month)))
+avg-arrival-delay-by-month
 
 ;; Optional: Use the `airlines` dataset to get the name of the carrier with the
 ;; highest average distance.
+
+(def airlines
+  (tc/dataset "./resources/data/airlines.csv"
+              {:key-fn keyword}))
+  
+(def carrier-highest-avg-distance
+  (-> ds
+      (tc/group-by [:carrier])
+      (tc/mean :distance)
+      (tc/rename-columns [:carrier :avg-distance])
+      (tc/inner-join airlines [:carrier])
+      (tc/order-by :avg-distance :desc) 
+      (tc/select-columns [:avg-distance :name])
+      (tc/first)
+
+      ))
+
+carrier-highest-avg-distance
 
