@@ -1,6 +1,6 @@
 (ns com.iraqidata.tasks.day-2
   (:require
-   [clojure.string :as str]   
+   [clojure.string :as str]
    [scicloj.clay.v2.api :as clay]
    [tablecloth.api :as tc]
    tech.v3.datatype.casting))
@@ -12,12 +12,18 @@
 (def flights-total
   (tc/row-count ds))
 flights-total
+;; => 336776
+
+;; Correct, 1 point.
 
 ;; 2. How many unique carriers were there in total?
 (def total-unique-carriers
   (tc/row-count (tc/unique-by ds :carrier))
   )
 total-unique-carriers
+;; => 16
+
+;; Correct, 1 point
 
 ;; 3. How many unique airports were there in total?
 (def total-unique-airports
@@ -26,6 +32,10 @@ total-unique-carriers
       (tc/unique-by)
       (tc/row-count)))
 total-unique-airports
+
+;; This returns the combination of `:origin` and `:dest` and not the unique
+;; count of airports. Zero.
+
 ;; without thread
 ;; (def total-unique-airports
 ;; (tc/row-count
@@ -40,20 +50,22 @@ total-unique-airports
   (tc/order-by :month)))
 avg-arrival-delay-by-month
 
+;; Correct, 1 point
+
 ;; Optional: Use the `airlines` dataset to get the name of the carrier with the
 ;; highest average distance.
 
 (def airlines
   (tc/dataset "./resources/data/airlines.csv"
               {:key-fn keyword}))
-  
+
 (def carrier-highest-avg-distance
   (-> ds
       (tc/group-by [:carrier])
       (tc/mean :distance)
       (tc/rename-columns [:carrier :avg-distance])
       (tc/inner-join airlines [:carrier])
-      (tc/order-by :avg-distance :desc) 
+      (tc/order-by :avg-distance :desc)
       (tc/select-columns [:avg-distance :name])
       (tc/first)
 
@@ -61,3 +73,5 @@ avg-arrival-delay-by-month
 
 carrier-highest-avg-distance
 
+;; Correct, 1 point.
+;; Final score: 4 points.
